@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #map_canvas {
+        width: 800px;
+        height: 600px;
+      }
+    </style>
+    <script src="/static/GeoJSON.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script>
+
+    function initialize() {
+        var map_canvas = document.getElementById('map_canvas');
+        var map_options = {
+            center: new google.maps.LatLng(43.5403, -79.5463),
+            zoom: 8,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(map_canvas, map_options)
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api', true);
+        xhr.onload = function() {
+            eval("var data=" + this.responseText);
+            var geoJSONList = new GeoJSON(data);
+            var latlngbounds = new google.maps.LatLngBounds();
+            for (var x in geoJSONList) {
+                geoJSONList[x].setTitle(geoJSONList[x].geojsonProperties.name);
+                geoJSONList[x].setMap(map);
+                latlngbounds.extend(geoJSONList[x].getPosition());
+            }
+            console.log(latlngbounds)
+            map.fitBounds(latlngbounds);
+        };
+        xhr.send()
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+    <div id="map_canvas"></div>
+  </body>
+</html>
