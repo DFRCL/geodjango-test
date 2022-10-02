@@ -6,7 +6,7 @@ class Venue(models.Model):
     name = models.CharField(max_length=255)
     city = models.CharField(max_length=30)
     state = models.CharField(max_length=20)
-    zip = models.CharField(max_length=10)
+    zip_code = models.CharField(max_length=10)
     coordinates = models.PointField(null=True, geography=False)
 
     objects = models.GeoManager()
